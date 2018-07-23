@@ -1,0 +1,114 @@
+import React from 'react';
+import FormInput from './FormInput.js'
+
+URL = "http://localhost:3001/api/v1/cocktails/";
+
+export default class CocktailForm extends React.Component {
+  constructor(props){
+    super(props)
+
+    this.state = {
+      name: "",
+      description: "",
+      instructions: "",
+      proportions: [
+        {
+          ingredient_name: "",
+          amount: ""
+        }
+      ]
+    }
+  }
+
+  handleChange = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value
+    })
+  }
+
+  handleSubmit = (event) => {
+    event.preventDefault()
+    this.props.passCreateCocktailFunc(this.state)
+    event.target.reset()
+  }
+
+  addEmptyIngredient = () => {
+    this.setState({
+      proportions: [...this.state.proportions, {ingredient_name: "", amount: ""}]
+    })
+  }
+
+  addIngredientInfo = (event) => {
+    this.setState({
+        proportions: [
+          [event.target.name]: event.target.value
+        ]
+    })
+  }
+
+  render(){
+    return (
+      <div className="cocktailFormerino">
+        <form onSubmit={this.handleSubmit}>
+          <h1>Create a Cocktail</h1>
+          <p>
+            <label>Name</label>
+            <input type="text" name="name" value={this.state.name} onChange={this.handleChange} />
+          </p>
+          <p>
+            <label>Description</label>
+            <input type="text" name="description" value={this.state.description} onChange={this.handleChange} /></p>
+          <p>
+            <label>Instructions</label>
+            <input type="text" name="instructions" value={this.state.instructions} onChange={this.handleChange} />
+          </p>
+          <p>
+            <h3>Proportions</h3>
+            {this.state.proportions.map((proportion, index) =>
+              <FormInput index={index} proportion={proportion} addIngredientInfo={this.addIngredientInfo} />
+            )}
+          </p>
+          <p>
+            <button onClick={this.addEmptyIngredient}>Add Ingredient</button>
+          </p>
+          <p>
+            <input type="submit" />
+          </p>
+        </form>
+      </div>
+    )
+  }
+}
+
+
+import React from 'react'
+
+export default class FormInput extends React.Component {
+  constructor(props){
+    super(props);
+
+    this.state = {
+      ingredient_name: this.props.proportion.ingredient_name,
+      amount: this.props.proportion.amount,
+      index: this.props.index
+    }
+  }
+
+
+
+  render() {
+    return(
+      <div className="newIngredient">
+        <p>
+          <label>Ingredient Name</label>
+          <input type="text" name="ingredient_name" onChange={this.props.addIngredientInfo} />
+        </p>
+        <p>
+          <label>Amount</label>
+          <input type="text" name="amount" onChange={this.props.addIngredientInfo} />
+        </p>
+
+      </div>
+    )
+  }
+}
